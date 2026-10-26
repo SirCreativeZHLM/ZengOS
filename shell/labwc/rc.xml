@@ -7,7 +7,7 @@
     <font place="" name="Inter" size="10"/>
   </theme>
   <focus><followMouse>no</followMouse><raiseOnFocus>yes</raiseOnFocus></focus>
-  <snapping><range>12</range><topMaximize>yes</topMaximize></snapping>
+  <snapping><range inner="12" outer="12"/><topMaximize>yes</topMaximize></snapping>
   <keyboard>
     <default />
     <keybind key="W-space"><action name="Execute" command="quickshell ipc call launcher toggle"/></keybind>

@@ -26,12 +26,10 @@ rm -rf "$profile" "$work"
 cp -r /usr/share/archiso/configs/releng "$profile"
 { cat "$root/iso/packages/live.txt" "$root/iso/packages/$edition.txt"; } | sed '/^$/d' | sort -u > "$profile/packages.x86_64"
 cp -r "$root/iso/profile/airootfs/." "$profile/airootfs/"
-chmod 600 "$profile/airootfs/root/.zlogin" 2>/dev/null || true
 
 name=zengos; label=ZENGOS
 [[ $edition == mini ]] && { name=zengos-mini; label=ZENGOSMINI; }
 sed -i "s|^iso_name=.*|iso_name=\"$name\"|; s|^iso_label=.*|iso_label=\"$label\"|; s|^iso_publisher=.*|iso_publisher=\"ZengOS <https://zengbot.com/os>\"|; s|^iso_application=.*|iso_application=\"ZengOS Live and Installer\"|" "$profile/profiledef.sh"
-sed -i "s|^file_permissions=(|file_permissions=(\n  [\"/root/.zlogin\"]=\"0:0:600\"|" "$profile/profiledef.sh"
 
 cat >> "$profile/pacman.conf" <<EOF
 
