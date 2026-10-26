@@ -8,7 +8,6 @@ license=(MIT)
 depends=(labwc quickshell qt6-declarative qt6-wayland foot thunar swaybg greetd greetd-tuigreet
          xdg-desktop-portal-wlr librsvg)
 options=(!strip)
-backup=(etc/greetd/config.toml)
 
 package() {
   local root="${ZENG_ROOT:?set ZENG_ROOT to the repository root}"
@@ -16,11 +15,17 @@ package() {
   cp -r "$root"/shell/zolt/. "$pkgdir/usr/share/zolt/"
   install -m644 "$root"/shell/labwc/{rc.xml,autostart,environment} "$pkgdir/etc/xdg/labwc/"
   cp -r "$root"/shell/labwc/themes/zolt "$pkgdir/usr/share/themes/"
-  cat > "$pkgdir/etc/greetd/config.toml" <<'EOF'
+  cat > "$pkgdir/etc/greetd/zengos.toml" <<'EOF'
 [terminal]
 vt = 1
 [default_session]
 command = "tuigreet --time --remember --cmd labwc"
 user = "greeter"
+EOF
+  # greetd owns config.toml, so point the service at our file instead of replacing theirs.
+  cat > "$pkgdir/etc/systemd/system/greetd.service.d/zengos.conf" <<'EOF'
+[Service]
+ExecStart=
+ExecStart=/usr/bin/greetd --config /etc/greetd/zengos.toml
 EOF
 }

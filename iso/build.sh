@@ -10,25 +10,16 @@ edition=${1:?usage: build.sh normal|mini}
 
 root=$(cd "$(dirname "$0")/.." && pwd)
 build=${ZENG_BUILD:-/var/tmp/zengos-build}
-repo=$build/repo
 profile=$build/profile-$edition
 work=$build/work-$edition
 out=${ZENG_OUT:-$root/out}
 
-pacman -Sy --noconfirm --needed archiso base-devel git cmake ninja qt6-declarative python
-mkdir -p "$repo" "$out"
+pacman -Sy --noconfirm --needed archiso
+mkdir -p "$out"
 
-# 1. Build the ZengOS packages into a local repository (makepkg refuses to run as root).
-id builder &>/dev/null || useradd -m builder
-chown -R builder "$build"
-mkdir -p "$build/pkgs" "$build/src" "$build/makepkg"
-for pkg in zengos-base zolt-desktop zengos-apps zengos-installer; do
-  rm -rf "$build/pkgs/$pkg" && cp -r "$root/packages/$pkg" "$build/pkgs/$pkg"
-  chown -R builder "$build/pkgs/$pkg" "$build/src" "$build/makepkg" "$repo"
-  (cd "$build/pkgs/$pkg" && sudo -u builder env ZENG_ROOT="$root" PKGDEST="$repo" SRCDEST="$build/src" \
-     BUILDDIR="$build/makepkg" makepkg -f --nodeps --noconfirm)
-done
-repo-add "$repo/zengos-local.db.tar.gz" "$repo"/*.pkg.tar.zst
+# 1. Build every ZengOS package into a local pacman repository (also used to install offline).
+ZENG_OUT="$out" ZENG_BUILD="$build" "$root/iso/build-repo.sh"
+repo=$out/repo
 
 # 2. Profile: Arch's releng base, our package list, our live overlay.
 rm -rf "$profile" "$work"
@@ -44,10 +35,20 @@ sed -i "s|^file_permissions=(|file_permissions=(\n  [\"/root/.zlogin\"]=\"0:0:60
 
 cat >> "$profile/pacman.conf" <<EOF
 
-[zengos-local]
+[zengos]
 SigLevel = Optional TrustAll
 Server = file://$repo
 EOF
+
+# The installer installs from this copy, so a base install needs no ZengOS server.
+mkdir -p "$profile/airootfs/opt/zengos-repo" "$profile/airootfs/usr/share/zengos"
+cp "$repo"/*.pkg.tar.zst "$repo"/zengos.db "$repo"/zengos.files "$profile/airootfs/opt/zengos-repo/"
+python3 - "$repo" "$profile/airootfs/usr/share/zengos/addons.json" <<'PY'
+import glob, json, sys
+repo, out = sys.argv[1:]
+have = lambda n: bool(glob.glob(f"{repo}/{n}-[0-9]*.pkg.tar.zst"))
+json.dump({"zengav": have("zengav"), "zengsuite": have("zengsuite")}, open(out, "w"))
+PY
 
 # 3. Image.
 mkarchiso -v -w "$work" -o "$out" "$profile"

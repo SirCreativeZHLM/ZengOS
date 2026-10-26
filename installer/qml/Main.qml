@@ -46,7 +46,7 @@ Window {
         page = 4
         Backend.install({
             edition: edition,
-            addons: [].concat(addAV ? ["zengav"] : [], addSuite ? ["zengsuite"] : []),
+            addons: [].concat(addAV && Backend.addons.zengav ? ["zengav"] : [], addSuite && Backend.addons.zengsuite ? ["zengsuite"] : []),
             disk: disk ? disk.path : "",
             encrypt: encrypt,
             confirm_erase: true,
@@ -154,14 +154,18 @@ Window {
             width: parent.width
             title: "ZengAV"
             detail: "Antivirus you run when you want. No background process."
-            checked: win.addAV
+            enabled: Backend.addons.zengav === true
+            note: enabled ? "" : "Not on this disc"
+            checked: win.addAV && enabled
             onToggled: win.addAV = !win.addAV
         }
         Toggle {
             width: parent.width
             title: "ZengSuite"
             detail: "The Zeng family of apps."
-            checked: win.addSuite
+            enabled: Backend.addons.zengsuite === true
+            note: enabled ? "" : "Coming soon"
+            checked: win.addSuite && enabled
             onToggled: win.addSuite = !win.addSuite
         }
     }

@@ -6,9 +6,11 @@ Item {
     property string title
     property string detail
     property bool checked: false
+    property string note
     signal toggled
 
     implicitHeight: 88
+    opacity: enabled ? 1 : 0.5
     scale: area.pressed ? 0.985 : 1
     Behavior on scale { NumberAnimation { duration: 110; easing.type: Easing.OutCubic } }
 
@@ -22,7 +24,7 @@ Item {
         anchors.left: parent.left
         anchors.leftMargin: 24
         anchors.right: track.left
-        anchors.rightMargin: 16
+        anchors.rightMargin: root.note === "" ? 16 : 150
         anchors.verticalCenter: parent.verticalCenter
         spacing: 3
         Text {
@@ -39,6 +41,14 @@ Item {
             font.family: Theme.face; font.pixelSize: 15
             color: Theme.inkDim
         }
+    }
+    Text {
+        anchors.right: track.left
+        anchors.rightMargin: 14
+        anchors.verticalCenter: parent.verticalCenter
+        text: root.note
+        font.family: Theme.face; font.pixelSize: 15; font.weight: Font.DemiBold
+        color: Theme.inkDim
     }
     Rectangle {
         id: track
@@ -62,7 +72,7 @@ Item {
         anchors.fill: parent
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
-        onClicked: root.toggled()
+        onClicked: if (root.enabled) root.toggled()
     }
     Accessible.role: Accessible.CheckBox
     Accessible.name: title

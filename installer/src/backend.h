@@ -16,6 +16,7 @@ class Backend : public QObject {
     QML_ELEMENT
     QML_SINGLETON
     Q_PROPERTY(bool demo READ demo CONSTANT)
+    Q_PROPERTY(QVariantMap addons READ addons CONSTANT)
     Q_PROPERTY(QVariantList disks READ disks NOTIFY disksChanged)
     Q_PROPERTY(bool running READ running NOTIFY runningChanged)
     Q_PROPERTY(bool finished READ finished NOTIFY finishedChanged)
@@ -28,6 +29,7 @@ public:
 
     bool demo() const { return m_demo; }
     QVariantList disks() const { return m_disks; }
+    QVariantMap addons() const { return m_addons; }
     bool running() const { return m_running; }
     bool finished() const { return m_finished; }
     double progress() const { return m_progress; }
@@ -60,6 +62,7 @@ private:
     QString m_message;
     QString m_error;
     QVariantList m_disks;
+    QVariantMap m_addons;
     QProcess *m_process = nullptr;
     QTimer m_demoTimer;
     int m_demoStep = 0;

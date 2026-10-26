@@ -1,6 +1,7 @@
 #include "backend.h"
 
 #include <QCoreApplication>
+#include <QFile>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -32,6 +33,12 @@ Backend::Backend(QObject *parent) : QObject(parent) {
 #endif
     m_demoTimer.setInterval(1100);
     connect(&m_demoTimer, &QTimer::timeout, this, &Backend::demoTick);
+    // Which optional add-ons this ISO actually carries (written at build time).
+    QFile f(QStringLiteral("/usr/share/zengos/addons.json"));
+    if (f.open(QIODevice::ReadOnly))
+        m_addons = QJsonDocument::fromJson(f.readAll()).object().toVariantMap();
+    else
+        m_addons = {{"zengav", true}, {"zengsuite", false}};
     refreshDisks();
 }
 

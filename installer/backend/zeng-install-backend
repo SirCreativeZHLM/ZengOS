@@ -24,6 +24,12 @@ EDITIONS = {
     "mini": ["zengos-base", "zolt-desktop"],
 }
 ADDONS = {"zengav": "zengav", "zengsuite": "zengsuite"}
+PACMAN_CONF = "/etc/zengos-pacman.conf"
+ONLINE_REPO = """
+[zengos]
+SigLevel = Optional TrustAll
+Server = https://github.com/SirCreativeZHLM/ZengOS/releases/download/repo
+"""
 USERNAME_RE = re.compile(r"^[a-z_][a-z0-9_-]{0,31}$")
 HOSTNAME_RE = re.compile(r"^[a-zA-Z0-9][a-zA-Z0-9-]{0,62}$")
 
@@ -59,9 +65,7 @@ def part(disk, n):
 
 
 def packages(cfg):
-    pkgs = list(EDITIONS[cfg["edition"]])
-    pkgs += [ADDONS[a] for a in cfg.get("addons", [])]
-    return pkgs
+    return list(EDITIONS[cfg["edition"]]) + [ADDONS[a] for a in cfg.get("addons", [])]
 
 
 def plan(cfg):
@@ -93,7 +97,8 @@ def plan(cfg):
         ["mount", rootdev, MNT], ["mount", "--mkdir", esp, f"{MNT}/boot"],
     ]))
     steps.append((0.55, "Installing the base system", [
-        ["pacstrap", "-K", MNT, "base", "linux", "linux-firmware", "networkmanager", "sudo", "efibootmgr"] + packages(cfg),
+        ["pacstrap", "-C", PACMAN_CONF, "-K", MNT, "base", "linux", "linux-firmware", "networkmanager", "sudo", "efibootmgr"] + packages(cfg),
+        ("append", f"{MNT}/etc/pacman.conf", ONLINE_REPO),
         ["genfstab", "-U", MNT, ("redirect", f"{MNT}/etc/fstab")],
     ]))
     hooks = "base udev autodetect modconf kms keyboard keymap block " + ("encrypt " if luks else "") + "filesystems fsck"
@@ -132,6 +137,13 @@ def run_cmd(cmd, dry):
             return emit({"dry": f"write {path}"})
         os.makedirs(os.path.dirname(path), exist_ok=True)
         with open(path, "w") as f:
+            f.write(text)
+        return
+    if kind == "append":
+        _, path, text = cmd
+        if dry:
+            return emit({"dry": f"append to {path}"})
+        with open(path, "a") as f:
             f.write(text)
         return
     if kind == "chroot":

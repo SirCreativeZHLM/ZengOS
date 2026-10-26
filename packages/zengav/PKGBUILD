@@ -1,0 +1,22 @@
+pkgname=zengav
+pkgver=0.2.1
+pkgrel=1
+pkgdesc="No-bloat antivirus: scan the computer, check files or folders (command line, no tray, no daemon)"
+arch=(x86_64)
+url="https://github.com/SirCreativeZHLM/ZengAV"
+license=(MIT Apache-2.0)
+makedepends=(rust)
+source=("$pkgname-$pkgver.tar.gz::https://github.com/SirCreativeZHLM/ZengAV/archive/refs/tags/v$pkgver.tar.gz")
+sha256sums=('b0799abee9ff3975235ae74b5c9c8aeb3d4a9869b00d9fb92d19a44b0bb7ab12')
+
+build() {
+  cd "ZengAV-$pkgver"
+  cargo build --release --locked --no-default-features --bin zengav
+}
+
+package() {
+  cd "ZengAV-$pkgver"
+  install -Dm755 target/release/zengav "$pkgdir/usr/bin/zengav"
+  install -Dm644 LICENSE-MIT "$pkgdir/usr/share/licenses/$pkgname/LICENSE-MIT"
+  install -Dm644 LICENSE-APACHE "$pkgdir/usr/share/licenses/$pkgname/LICENSE-APACHE"
+}

@@ -7,10 +7,25 @@ url="https://zengbot.com/os"
 license=(MIT)
 depends=(networkmanager pipewire pipewire-pulse wireplumber sudo bluez noto-fonts inter-font)
 options=(!strip)
+install=zengos-base.install
 
 package() {
   local root="${ZENG_ROOT:?set ZENG_ROOT to the repository root}"
-  install -Dm644 "$root/branding/os-release" "$pkgdir/usr/lib/os-release"
+  # /usr/lib/os-release belongs to `filesystem`; ship ours elsewhere and copy it over with a hook.
+  install -Dm644 "$root/branding/os-release" "$pkgdir/usr/share/zengos/os-release"
+  install -Dm644 /dev/stdin "$pkgdir/usr/share/libalpm/hooks/zengos-os-release.hook" <<'EOF'
+[Trigger]
+Type = Package
+Operation = Install
+Operation = Upgrade
+Target = filesystem
+Target = zengos-base
+
+[Action]
+Description = Applying ZengOS branding...
+When = PostTransaction
+Exec = /usr/bin/install -m644 /usr/share/zengos/os-release /usr/lib/os-release
+EOF
   install -Dm644 "$root/branding/zengos.svg" "$pkgdir/usr/share/icons/hicolor/scalable/apps/zengos.svg"
   install -Dm644 "$root/branding/wallpaper.svg" "$pkgdir/usr/share/backgrounds/zengos.svg"
 }

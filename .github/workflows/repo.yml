@@ -1,0 +1,31 @@
+name: Package repository
+
+# Builds every ZengOS package and publishes it as a pacman repository on the
+# "repo" release: https://github.com/SirCreativeZHLM/ZengOS/releases/download/repo
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ["packages/**", "shell/**", "installer/**", "branding/**"]
+
+permissions:
+  contents: write
+
+jobs:
+  repo:
+    runs-on: ubuntu-24.04
+    container:
+      image: archlinux:latest
+      options: --privileged
+    steps:
+      - run: pacman -Syu --noconfirm git sudo base-devel github-cli cmake ninja qt6-declarative rust
+      - uses: actions/checkout@v4
+      - name: Build packages
+        run: iso/build-repo.sh
+      - name: Publish to the repo release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          gh release view repo >/dev/null 2>&1 || gh release create repo --title "Package repository" --notes "pacman repository for ZengOS. Not a download." --prerelease
+          gh release upload repo --clobber out/repo/*

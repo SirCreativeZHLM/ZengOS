@@ -1,0 +1,4 @@
+post_install() {
+  install -m644 /usr/share/zengos/os-release /usr/lib/os-release
+}
+post_upgrade() { post_install; }
