@@ -13,7 +13,17 @@ jobs:
       - run: python3 -m unittest discover -s installer/tests -v
   build-ui:
     runs-on: ubuntu-24.04
+    container: archlinux:latest
     steps:
+      - run: pacman -Syu --noconfirm cmake ninja gcc qt6-declarative qt6-wayland ttf-inter git
       - uses: actions/checkout@v4
-      - run: sudo apt-get update && sudo apt-get install -y cmake ninja-build qt6-declarative-dev qt6-base-dev qml6-module-qtquick qml6-module-qtquick-window
       - run: cmake -S installer -B build -G Ninja && cmake --build build
+      - name: Render every page offscreen on Linux
+        run: |
+          mkdir -p shots
+          for p in 0 1 2 3 4; do QT_QPA_PLATFORM=offscreen ./build/zengos-installer --screenshot shots/page-$p.png --page $p; done
+          ls -l shots
+      - uses: actions/upload-artifact@v4
+        with:
+          name: installer-screens
+          path: shots/*
