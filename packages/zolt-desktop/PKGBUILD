@@ -11,7 +11,7 @@ options=(!strip)
 
 package() {
   local root="${ZENG_ROOT:?set ZENG_ROOT to the repository root}"
-  install -d "$pkgdir/usr/share/zolt" "$pkgdir/etc/xdg/labwc" "$pkgdir/usr/share/themes" "$pkgdir/etc/greetd"
+  install -d "$pkgdir/usr/share/zolt" "$pkgdir/etc/xdg/labwc" "$pkgdir/usr/share/themes" "$pkgdir/etc/greetd" "$pkgdir/etc/systemd/system/greetd.service.d"
   cp -r "$root"/shell/zolt/. "$pkgdir/usr/share/zolt/"
   install -m644 "$root"/shell/labwc/{rc.xml,autostart,environment} "$pkgdir/etc/xdg/labwc/"
   cp -r "$root"/shell/labwc/themes/zolt "$pkgdir/usr/share/themes/"
