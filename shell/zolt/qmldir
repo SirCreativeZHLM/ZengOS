@@ -1,1 +1,4 @@
 singleton Theme 1.0 Theme.qml
+Bar 1.0 Bar.qml
+Dock 1.0 Dock.qml
+Launcher 1.0 Launcher.qml
