@@ -21,9 +21,12 @@ mkdir -p "$repo" "$out"
 # 1. Build the ZengOS packages into a local repository (makepkg refuses to run as root).
 id builder &>/dev/null || useradd -m builder
 chown -R builder "$build"
+mkdir -p "$build/pkgs" "$build/src" "$build/makepkg"
 for pkg in zengos-base zolt-desktop zengos-apps zengos-installer; do
-  (cd "$root/packages/$pkg" && sudo -u builder env ZENG_ROOT="$root" PKGDEST="$repo" BUILDDIR="$build/makepkg" \
-     makepkg -f --nodeps --noconfirm)
+  rm -rf "$build/pkgs/$pkg" && cp -r "$root/packages/$pkg" "$build/pkgs/$pkg"
+  chown -R builder "$build/pkgs/$pkg" "$build/src" "$build/makepkg" "$repo"
+  (cd "$build/pkgs/$pkg" && sudo -u builder env ZENG_ROOT="$root" PKGDEST="$repo" SRCDEST="$build/src" \
+     BUILDDIR="$build/makepkg" makepkg -f --nodeps --noconfirm)
 done
 repo-add "$repo/zengos-local.db.tar.gz" "$repo"/*.pkg.tar.zst
 
