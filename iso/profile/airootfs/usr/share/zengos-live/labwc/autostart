@@ -1,0 +1,2 @@
+swaybg -c 000000 >/dev/null 2>&1 &
+zengos-installer >/var/log/zengos-installer.log 2>&1 &

@@ -1,0 +1,15 @@
+border.width: 0
+padding.width: 10
+window.active.title.bg.color: #161618
+window.inactive.title.bg.color: #0c0c0d
+window.active.label.text.color: #F5F5F7
+window.inactive.label.text.color: #98989F
+window.active.button.unpressed.image.color: #F5F5F7
+window.inactive.button.unpressed.image.color: #98989F
+window.label.text.justify: center
+osd.bg.color: #161618
+osd.label.text.color: #F5F5F7
+menu.items.bg.color: #161618
+menu.items.text.color: #F5F5F7
+menu.items.active.bg.color: #2A2A2D
+menu.items.active.text.color: #34D399

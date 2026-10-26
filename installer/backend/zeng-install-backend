@@ -1,0 +1,204 @@
+#!/usr/bin/env python3
+"""ZengOS install backend.
+
+Reads one JSON config object on stdin and writes one JSON progress object per
+line on stdout: {"progress": 0..1, "message": str} and finally {"done": true},
+or {"error": str} on failure.
+
+    --json       progress as JSON lines (what the installer UI uses)
+    --dry-run    print the commands instead of running them
+    --plan       print the plan for the config on stdin and exit
+
+Standard library only; it runs on the live ISO.
+"""
+import json
+import os
+import re
+import shlex
+import subprocess
+import sys
+
+MNT = "/mnt"
+EDITIONS = {
+    "normal": ["zengos-base", "zolt-desktop", "zengos-apps"],
+    "mini": ["zengos-base", "zolt-desktop"],
+}
+ADDONS = {"zengav": "zengav", "zengsuite": "zengsuite"}
+USERNAME_RE = re.compile(r"^[a-z_][a-z0-9_-]{0,31}$")
+HOSTNAME_RE = re.compile(r"^[a-zA-Z0-9][a-zA-Z0-9-]{0,62}$")
+
+
+class ConfigError(Exception):
+    pass
+
+
+def validate(cfg):
+    if cfg.get("edition") not in EDITIONS:
+        raise ConfigError("Unknown edition.")
+    for addon in cfg.get("addons", []):
+        if addon not in ADDONS:
+            raise ConfigError(f"Unknown add-on: {addon}")
+    disk = cfg.get("disk", "")
+    if not re.fullmatch(r"/dev/(sd[a-z]+|vd[a-z]+|nvme\d+n\d+|mmcblk\d+)", disk):
+        raise ConfigError("Choose a disk to install to.")
+    if cfg.get("confirm_erase") is not True:
+        raise ConfigError("Erasing the disk was not confirmed.")
+    if not USERNAME_RE.match(cfg.get("username", "")):
+        raise ConfigError("That username is not valid.")
+    if not cfg.get("password"):
+        raise ConfigError("A password is required.")
+    if not HOSTNAME_RE.match(cfg.get("hostname", "zengos")):
+        raise ConfigError("That computer name is not valid.")
+    if "\n" in cfg.get("fullname", "") or ":" in cfg.get("fullname", ""):
+        raise ConfigError("The name contains characters that are not allowed.")
+
+
+def part(disk, n):
+    sep = "p" if disk[-1].isdigit() else ""
+    return f"{disk}{sep}{n}"
+
+
+def packages(cfg):
+    pkgs = list(EDITIONS[cfg["edition"]])
+    pkgs += [ADDONS[a] for a in cfg.get("addons", [])]
+    return pkgs
+
+
+def plan(cfg):
+    """Return a list of (progress, message, [argv | ("chroot", argv) | ("write", path, text)])."""
+    disk = cfg["disk"]
+    esp, root = part(disk, 1), part(disk, 2)
+    luks = bool(cfg.get("encrypt"))
+    rootdev = "/dev/mapper/zengroot" if luks else root
+    host = cfg.get("hostname", "zengos")
+    user = cfg["username"]
+    steps = []
+
+    steps.append((0.04, "Preparing the disk", [
+        ["umount", "-R", MNT], ["wipefs", "-af", disk],
+    ]))
+    steps.append((0.10, "Creating partitions", [
+        ["sfdisk", disk, ("stdin", "label: gpt\n,512M,U\n,,L\n")],
+        ["udevadm", "settle"],
+    ]))
+    fmt = [["mkfs.fat", "-F32", esp]]
+    if luks:
+        fmt += [
+            ["cryptsetup", "luksFormat", "--batch-mode", root, ("keyfile", cfg["password"])],
+            ["cryptsetup", "open", root, "zengroot", ("keyfile", cfg["password"])],
+        ]
+    fmt += [["mkfs.ext4", "-F", rootdev]]
+    steps.append((0.20, "Formatting", fmt))
+    steps.append((0.24, "Mounting", [
+        ["mount", rootdev, MNT], ["mount", "--mkdir", esp, f"{MNT}/boot"],
+    ]))
+    steps.append((0.55, "Installing the base system", [
+        ["pacstrap", "-K", MNT, "base", "linux", "linux-firmware", "networkmanager", "sudo", "efibootmgr"] + packages(cfg),
+        ["genfstab", "-U", MNT, ("redirect", f"{MNT}/etc/fstab")],
+    ]))
+    hooks = "base udev autodetect modconf kms keyboard keymap block " + ("encrypt " if luks else "") + "filesystems fsck"
+    steps.append((0.78, "Setting up your system", [
+        ("write", f"{MNT}/etc/hostname", host + "\n"),
+        ("write", f"{MNT}/etc/locale.gen", "en_US.UTF-8 UTF-8\n"),
+        ("write", f"{MNT}/etc/locale.conf", "LANG=en_US.UTF-8\n"),
+        ("write", f"{MNT}/etc/sudoers.d/10-wheel", "%wheel ALL=(ALL:ALL) ALL\n"),
+        ("write", f"{MNT}/etc/mkinitcpio.conf.d/zengos.conf", f"HOOKS=({hooks})\n"),
+        ("chroot", ["locale-gen"]),
+        ("chroot", ["useradd", "-m", "-G", "wheel", "-c", cfg.get("fullname", user), user]),
+        ("chpasswd", f"{user}:{cfg['password']}\n"),
+        ("chroot", ["systemctl", "enable", "NetworkManager", "greetd"]),
+        ("chroot", ["mkinitcpio", "-P"]),
+    ]))
+    cmdline = (f"cryptdevice=UUID={{ROOT_UUID}}:zengroot root=/dev/mapper/zengroot rw" if luks
+               else "root=UUID={ROOT_UUID} rw")
+    steps.append((0.92, "Setting up the bootloader", [
+        ("chroot", ["bootctl", "install"]),
+        ("write", f"{MNT}/boot/loader/loader.conf", "default zengos.conf\ntimeout 2\n"),
+        ("entry", f"{MNT}/boot/loader/entries/zengos.conf", cmdline, root),
+    ]))
+    steps.append((1.0, "Done", [["umount", "-R", MNT]]))
+    return steps
+
+
+def emit(obj):
+    print(json.dumps(obj), flush=True)
+
+
+def run_cmd(cmd, dry):
+    kind = cmd[0] if isinstance(cmd, tuple) else None
+    if kind == "write":
+        _, path, text = cmd
+        if dry:
+            return emit({"dry": f"write {path}"})
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        with open(path, "w") as f:
+            f.write(text)
+        return
+    if kind == "chroot":
+        return run_argv(["arch-chroot", MNT] + cmd[1], dry)
+    if kind == "chpasswd":
+        if dry:
+            return emit({"dry": "arch-chroot /mnt chpasswd <password>"})
+        subprocess.run(["arch-chroot", MNT, "chpasswd"], input=cmd[1], text=True, check=True)
+        return
+    if kind == "entry":
+        _, path, cmdline, rootpart = cmd
+        if dry:
+            return emit({"dry": f"write {path} (root={rootpart})"})
+        uuid = subprocess.run(["blkid", "-s", "UUID", "-o", "value", rootpart], capture_output=True, text=True, check=True).stdout.strip()
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        with open(path, "w") as f:
+            f.write("title ZengOS\nlinux /vmlinuz-linux\ninitrd /initramfs-linux.img\n"
+                    f"options {cmdline.replace('{ROOT_UUID}', uuid)}\n")
+        return
+    run_argv(cmd, dry)
+
+
+def run_argv(argv, dry):
+    stdin = None
+    redirect = None
+    clean = []
+    for a in argv:
+        if isinstance(a, (tuple, list)) and a[0] == "stdin":
+            stdin = a[1]
+        elif isinstance(a, (tuple, list)) and a[0] == "keyfile":
+            stdin = a[1]
+            clean += ["--key-file", "-"]
+        elif isinstance(a, (tuple, list)) and a[0] == "redirect":
+            redirect = a[1]
+        else:
+            clean.append(a)
+    if dry:
+        shown = " ".join(shlex.quote(c) for c in clean)
+        return emit({"dry": shown + (f" > {redirect}" if redirect else "")})
+    out = open(redirect, "w") if redirect else None
+    try:
+        r = subprocess.run(clean, input=stdin, text=True, stdout=out or subprocess.DEVNULL,
+                           stderr=subprocess.PIPE)
+    finally:
+        if out:
+            out.close()
+    if r.returncode != 0 and clean[0] not in ("umount", "wipefs"):
+        raise RuntimeError(f"{clean[0]} failed: {r.stderr.strip()[-300:]}")
+
+
+def main(argv):
+    dry = "--dry-run" in argv
+    cfg = json.load(sys.stdin)
+    try:
+        validate(cfg)
+        if not dry and os.geteuid() != 0:
+            raise ConfigError("The installer must run as root.")
+        for progress, message, cmds in plan(cfg):
+            emit({"progress": progress, "message": message})
+            for cmd in cmds:
+                run_cmd(cmd, dry)
+        emit({"progress": 1.0, "message": "Done", "done": True})
+    except (ConfigError, RuntimeError, subprocess.CalledProcessError, OSError) as e:
+        emit({"error": str(e)})
+        return 1
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))

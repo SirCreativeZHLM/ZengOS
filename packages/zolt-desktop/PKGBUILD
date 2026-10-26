@@ -1,0 +1,26 @@
+pkgname=zolt-desktop
+pkgver=0.2.0
+pkgrel=1
+pkgdesc="Zolt, the ZengOS desktop: labwc compositor with the Zolt bar, dock and launcher"
+arch=(any)
+url="https://zengbot.com/os"
+license=(MIT)
+depends=(labwc quickshell qt6-declarative qt6-wayland foot thunar swaybg greetd greetd-tuigreet
+         xdg-desktop-portal-wlr librsvg)
+options=(!strip)
+backup=(etc/greetd/config.toml)
+
+package() {
+  local root="${ZENG_ROOT:?set ZENG_ROOT to the repository root}"
+  install -d "$pkgdir/usr/share/zolt" "$pkgdir/etc/xdg/labwc" "$pkgdir/usr/share/themes" "$pkgdir/etc/greetd"
+  cp -r "$root"/shell/zolt/. "$pkgdir/usr/share/zolt/"
+  install -m644 "$root"/shell/labwc/{rc.xml,autostart,environment} "$pkgdir/etc/xdg/labwc/"
+  cp -r "$root"/shell/labwc/themes/zolt "$pkgdir/usr/share/themes/"
+  cat > "$pkgdir/etc/greetd/config.toml" <<'EOF'
+[terminal]
+vt = 1
+[default_session]
+command = "tuigreet --time --remember --cmd labwc"
+user = "greeter"
+EOF
+}

@@ -1,0 +1,19 @@
+name: Installer
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  backend-tests:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 -m unittest discover -s installer/tests -v
+  build-ui:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y cmake ninja-build qt6-declarative-dev qt6-base-dev qml6-module-qtquick qml6-module-qtquick-window
+      - run: cmake -S installer -B build -G Ninja && cmake --build build

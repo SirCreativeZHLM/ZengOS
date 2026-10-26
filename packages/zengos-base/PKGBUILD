@@ -1,0 +1,16 @@
+pkgname=zengos-base
+pkgver=0.2.0
+pkgrel=1
+pkgdesc="ZengOS base: branding, networking, audio and firmware, nothing else"
+arch=(any)
+url="https://zengbot.com/os"
+license=(MIT)
+depends=(networkmanager pipewire pipewire-pulse wireplumber sudo bluez noto-fonts ttf-inter)
+options=(!strip)
+
+package() {
+  local root="${ZENG_ROOT:?set ZENG_ROOT to the repository root}"
+  install -Dm644 "$root/branding/os-release" "$pkgdir/usr/lib/os-release"
+  install -Dm644 "$root/branding/zengos.svg" "$pkgdir/usr/share/icons/hicolor/scalable/apps/zengos.svg"
+  install -Dm644 "$root/branding/wallpaper.svg" "$pkgdir/usr/share/backgrounds/zengos.svg"
+}

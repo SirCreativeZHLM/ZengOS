@@ -1,0 +1,37 @@
+name: Build ISO
+
+# Builds ZengOS in an Arch Linux container on GitHub's runners, so nobody needs a
+# local VM. Releases attach the ISOs and their SHA-256 files.
+on:
+  workflow_dispatch:
+  push:
+    tags: ["v*"]
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 -m unittest discover -s installer/tests -v
+
+  iso:
+    needs: test
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        edition: [normal, mini]
+    container:
+      image: archlinux:latest
+      options: --privileged
+    steps:
+      - run: pacman -Syu --noconfirm git sudo
+      - uses: actions/checkout@v4
+      - run: iso/build.sh ${{ matrix.edition }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: zengos-${{ matrix.edition }}
+          path: out/*
+      - if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: out/*

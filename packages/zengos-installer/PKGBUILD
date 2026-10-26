@@ -1,0 +1,19 @@
+pkgname=zengos-installer
+pkgver=0.2.0
+pkgrel=1
+pkgdesc="The ZengOS installer (Qt Quick) and its install backend"
+arch=(x86_64)
+url="https://zengbot.com/os"
+license=(MIT)
+depends=(qt6-declarative qt6-wayland python arch-install-scripts cryptsetup dosfstools e2fsprogs util-linux)
+makedepends=(cmake ninja)
+
+build() {
+  local root="${ZENG_ROOT:?set ZENG_ROOT to the repository root}"
+  cmake -S "$root/installer" -B "$srcdir/build" -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr
+  cmake --build "$srcdir/build"
+}
+
+package() {
+  DESTDIR="$pkgdir" cmake --install "$srcdir/build"
+}

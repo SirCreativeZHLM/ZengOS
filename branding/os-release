@@ -1,0 +1,11 @@
+NAME="ZengOS"
+PRETTY_NAME="ZengOS"
+ID=zengos
+ID_LIKE=arch
+BUILD_ID=rolling
+ANSI_COLOR="38;2;52;211;153"
+HOME_URL="https://zengbot.com/os"
+DOCUMENTATION_URL="https://zengbot.com/os"
+SUPPORT_URL="https://github.com/SirCreativeZHLM/ZengOS/issues"
+BUG_REPORT_URL="https://github.com/SirCreativeZHLM/ZengOS/issues"
+LOGO=zengos

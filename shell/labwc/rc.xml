@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<labwc_config>
+  <core><gap>10</gap></core>
+  <theme>
+    <name>zolt</name>
+    <cornerRadius>14</cornerRadius>
+    <font place="" name="Inter" size="10"/>
+  </theme>
+  <focus><followMouse>no</followMouse><raiseOnFocus>yes</raiseOnFocus></focus>
+  <snapping><range>12</range><topMaximize>yes</topMaximize></snapping>
+  <keyboard>
+    <default />
+    <keybind key="W-space"><action name="Execute" command="quickshell ipc call launcher toggle"/></keybind>
+    <keybind key="C-A-t"><action name="Execute" command="foot"/></keybind>
+    <keybind key="W-e"><action name="Execute" command="thunar"/></keybind>
+    <keybind key="W-q"><action name="Close"/></keybind>
+    <keybind key="W-Left"><action name="SnapToEdge" direction="left"/></keybind>
+    <keybind key="W-Right"><action name="SnapToEdge" direction="right"/></keybind>
+    <keybind key="W-Up"><action name="ToggleMaximize"/></keybind>
+    <keybind key="W-l"><action name="Execute" command="loginctl lock-session"/></keybind>
+  </keyboard>
+  <mouse><default /></mouse>
+</labwc_config>

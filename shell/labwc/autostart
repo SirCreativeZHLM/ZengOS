@@ -1,0 +1,3 @@
+# Started by labwc. Zolt draws the bar, dock and launcher.
+swaybg -c 000000 >/dev/null 2>&1 &
+quickshell -p /usr/share/zolt >/dev/null 2>&1 &

@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ZengOS — Screw Windows</title>
+<meta name="description" content="ZengOS is a beautiful, zero-bloat operating system built on Arch Linux, with Zolt, a new desktop, and an installer that feels like it came from Apple.">
+<meta name="color-scheme" content="dark light">
+<link rel="icon" href="zengos-logo.svg" type="image/svg+xml">
+<link rel="stylesheet" href="zengos.css">
+<script src="zengos.js" defer></script>
+</head>
+<body>
+
+<header class="top">
+  <a class="word" href="./">ZengOS</a>
+  <nav aria-label="Main">
+    <a href="#editions">Editions</a>
+    <a href="#zolt">Desktop</a>
+    <a href="#installer">Installer</a>
+    <a href="#build">Build</a>
+  </nav>
+  <a class="btn btn-small" href="https://github.com/SirCreativeZHLM/ZengOS">Get the source</a>
+</header>
+
+<main>
+
+<section class="hero">
+  <div class="hero-copy">
+    <h1>Screw Windows.</h1>
+    <p class="lead">ZengOS is an operating system built on Arch Linux. A new desktop, an installer you will actually enjoy, and nothing you did not ask for.</p>
+    <div class="actions">
+      <a class="btn" href="#build">Build it today</a>
+      <a class="btn btn-quiet" href="#status">Where it stands</a>
+    </div>
+  </div>
+  <figure class="hero-shot">
+    <img src="img/installer-1.png" width="1280" height="800" alt="The ZengOS installer asking the user to choose between ZengOS and ZengOS Mini, with switches for ZengAV and ZengSuite.">
+  </figure>
+</section>
+
+<section class="statement">
+  <p class="big">Zero bloat is a rule, not a slogan. If it is not on the list, it is not on your disk.</p>
+</section>
+
+<section id="editions" class="editions">
+  <h2>Two sizes. Pick one.</h2>
+  <div class="edition-grid">
+    <article class="edition ed-normal">
+      <h3>ZengOS</h3>
+      <p>The desktop, a terminal, files, a browser, and viewers for pictures and video. Ready on first boot.</p>
+    </article>
+    <article class="edition ed-mini">
+      <h3>ZengOS Mini</h3>
+      <p>The desktop and a terminal. Everything else is one command away, when you want it.</p>
+    </article>
+  </div>
+
+  <div class="picker" data-picker>
+    <div class="picker-controls" role="group" aria-label="Choose what to install">
+      <button type="button" class="seg is-on" data-edition="normal" aria-pressed="true">ZengOS</button>
+      <button type="button" class="seg" data-edition="mini" aria-pressed="false">ZengOS Mini</button>
+      <button type="button" class="chip" data-addon="zengav" aria-pressed="false">+ ZengAV</button>
+      <button type="button" class="chip" data-addon="zengsuite" aria-pressed="false">+ ZengSuite</button>
+    </div>
+    <p class="picker-count" aria-live="polite"><span data-count>0</span> packages you chose, plus the Linux kernel and firmware.</p>
+    <ul class="packages" data-packages></ul>
+  </div>
+</section>
+
+<section id="zolt" class="zolt">
+  <div class="zolt-copy">
+    <h2>Meet Zolt, the desktop.</h2>
+    <p>Not another KDE skin and not another tiling window manager. Zolt is a small, calm desktop: a bar across the top, a dock that grows under your pointer, and a launcher on <kbd>Super</kbd> + <kbd>Space</kbd>.</p>
+    <p>It runs on labwc, a light Wayland compositor, with the shell written in QML. Windows snap to the edges with <kbd>Super</kbd> and the arrow keys. There is no Hyprland and no background service you did not start.</p>
+  </div>
+  <div class="dock-demo" data-dock aria-label="A demonstration of the Zolt dock. Move the pointer over it.">
+    <p class="dock-hint">Try the dock</p>
+    <div class="dock">
+      <button type="button" class="app" aria-label="Files">Fi</button>
+      <button type="button" class="app" aria-label="Terminal">&gt;_</button>
+      <button type="button" class="app" aria-label="Firefox">Fx</button>
+      <button type="button" class="app" aria-label="Launcher">Z</button>
+    </div>
+  </div>
+</section>
+
+<section id="installer" class="installer">
+  <h2>An installer that respects you.</h2>
+  <p class="lead">Big type. Clear buttons. One decision per screen, and no jargon. Your disk is never touched until you press Install.</p>
+  <div class="shots">
+    <figure><img loading="lazy" src="img/installer-2.png" width="1280" height="800" alt="Installer screen asking which disk to use, with an Encrypt the disk switch turned on."><figcaption>Pick a disk, and encrypt it with one switch.</figcaption></figure>
+    <figure><img loading="lazy" src="img/installer-3.png" width="1280" height="800" alt="Installer screen asking for a name and password."><figcaption>Make your account.</figcaption></figure>
+    <figure><img loading="lazy" src="img/installer-4.png" width="1280" height="800" alt="Installer showing a progress bar while installing."><figcaption>Watch it install.</figcaption></figure>
+  </div>
+</section>
+
+<section class="addons">
+  <h2>Add what you need.</h2>
+  <div class="addon-grid">
+    <article>
+      <h3>ZengAV</h3>
+      <p>Antivirus with two commands: scan everything, or check a path. No tray icon, no background process, no telemetry.</p>
+    </article>
+    <article>
+      <h3>ZengSuite</h3>
+      <p>The Zeng family of apps, installed alongside the system if you choose it in the installer.</p>
+    </article>
+  </div>
+</section>
+
+<section id="status" class="status">
+  <h2>Where it stands.</h2>
+  <div class="status-grid">
+    <div>
+      <h3>Done</h3>
+      <ul>
+        <li>The installer interface, written in Qt Quick and running.</li>
+        <li>The install backend: partitioning, encryption, bootloader. It refuses unsafe input, and its tests pass in dry-run mode.</li>
+        <li>The Zolt shell: bar, dock and launcher.</li>
+        <li>Package definitions and the ISO build, run by GitHub Actions in an Arch container.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Not yet</h3>
+      <ul>
+        <li>No ISO has been published. None has been booted, so none is called ready.</li>
+        <li>The installer has not written to a real disk.</li>
+        <li>The Zolt shell has not run on a real labwc session.</li>
+        <li>Nothing has been tested on real hardware.</li>
+      </ul>
+    </div>
+  </div>
+  <p class="fine">Looking for the earlier ZoltOS and ZengOS previews? They are still online in the <a href="download.html">archive</a>. They are older, different builds.</p>
+</section>
+
+<section id="build" class="build">
+  <h2>Build it yourself.</h2>
+  <p class="lead">Everything is open source. You do not need a virtual machine: GitHub builds the ISO for you in an Arch Linux container. Or build it on any x86_64 Arch machine.</p>
+  <pre><code>git clone https://github.com/SirCreativeZHLM/ZengOS
+cd ZengOS
+sudo iso/build.sh normal    # or: mini</code></pre>
+  <p class="actions"><a class="btn" href="https://github.com/SirCreativeZHLM/ZengOS">Open the repository</a></p>
+</section>
+
+</main>
+
+<footer class="foot">
+  <p class="mark">ZengOS</p>
+  <p class="fine">Open source under the MIT licence. Built on Arch Linux. ZengOS is independent and is not affiliated with Arch Linux, Apple or Microsoft.</p>
+</footer>
+
+</body>
+</html>

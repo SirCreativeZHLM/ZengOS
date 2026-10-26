@@ -1,0 +1,8 @@
+pkgname=zengos-apps
+pkgver=0.2.0
+pkgrel=1
+pkgdesc="ZengOS apps (Normal edition): browser, image and media viewers"
+arch=(any)
+url="https://zengbot.com/os"
+license=(MIT)
+depends=(firefox imv mpv)
