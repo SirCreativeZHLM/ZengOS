@@ -5,7 +5,7 @@ pkgdesc="ZengOS base: branding, networking, audio and firmware, nothing else"
 arch=(any)
 url="https://zengbot.com/os"
 license=(MIT)
-depends=(networkmanager pipewire pipewire-pulse wireplumber sudo bluez noto-fonts ttf-inter)
+depends=(networkmanager pipewire pipewire-pulse wireplumber sudo bluez noto-fonts inter-font)
 options=(!strip)
 
 package() {

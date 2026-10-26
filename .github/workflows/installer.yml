@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-24.04
     container: archlinux:latest
     steps:
-      - run: pacman -Syu --noconfirm cmake ninja gcc qt6-declarative qt6-wayland ttf-inter git
+      - run: pacman -Syu --noconfirm cmake ninja gcc qt6-declarative qt6-wayland inter-font git
       - uses: actions/checkout@v4
       - run: cmake -S installer -B build -G Ninja && cmake --build build
       - name: Render every page offscreen on Linux
