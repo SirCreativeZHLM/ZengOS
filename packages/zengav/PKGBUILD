@@ -6,6 +6,7 @@ arch=(x86_64)
 url="https://github.com/SirCreativeZHLM/ZengAV"
 license=(MIT Apache-2.0)
 makedepends=(rust)
+options=(!lto)
 source=("$pkgname-$pkgver.tar.gz::https://github.com/SirCreativeZHLM/ZengAV/archive/refs/tags/v$pkgver.tar.gz")
 sha256sums=('b0799abee9ff3975235ae74b5c9c8aeb3d4a9869b00d9fb92d19a44b0bb7ab12')
 
