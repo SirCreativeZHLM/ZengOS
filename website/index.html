@@ -50,19 +50,19 @@
   <div class="dl-grid">
     <article class="dl ed-normal">
       <h3>ZengOS</h3>
-      <p class="dl-meta">@NORMAL_SIZE@ &middot; x86_64 &middot; UEFI</p>
+      <p class="dl-meta">1.6 GiB &middot; x86_64 &middot; UEFI</p>
       <p>The desktop, a terminal, files, Firefox, and image and video viewers.</p>
-      <p class="dl-status">Built and checksummed. Not yet booted.</p>
-      <a class="btn" href="@NORMAL_URL@">Download ISO</a>
-      <p class="sum"><a href="@NORMAL_SUM_URL@">SHA-256</a> @NORMAL_SUM@</p>
+      <p class="dl-status">Boots into the installer in QEMU. A full install of this edition has not been run yet.</p>
+      <a class="btn" href="https://github.com/SirCreativeZHLM/ZengOS/releases/download/v0.2.0/zengos-2026.10.27-x86_64.iso">Download ISO</a>
+      <p class="sum"><a href="https://github.com/SirCreativeZHLM/ZengOS/releases/download/v0.2.0/zengos-2026.10.27-x86_64.iso.sha256">SHA-256</a> d73f2272900175fc9564080df5500cb2ff841af2c19bc7172cad1b9b38a157fa</p>
     </article>
     <article class="dl ed-mini">
       <h3>ZengOS Mini</h3>
-      <p class="dl-meta">@MINI_SIZE@ &middot; x86_64 &middot; UEFI</p>
+      <p class="dl-meta">1.5 GiB &middot; x86_64 &middot; UEFI</p>
       <p>The desktop and a terminal. Nothing else.</p>
       <p class="dl-status">Booted and installed to an encrypted virtual disk in QEMU. The installed system reached the Zolt desktop.</p>
-      <a class="btn" href="@MINI_URL@">Download ISO</a>
-      <p class="sum"><a href="@MINI_SUM_URL@">SHA-256</a> @MINI_SUM@</p>
+      <a class="btn" href="https://github.com/SirCreativeZHLM/ZengOS/releases/download/v0.2.0/zengos-mini-2026.10.27-x86_64.iso">Download ISO</a>
+      <p class="sum"><a href="https://github.com/SirCreativeZHLM/ZengOS/releases/download/v0.2.0/zengos-mini-2026.10.27-x86_64.iso.sha256">SHA-256</a> f487204cb83116f6342ea94fd2b26a1e4f134851d5b88462bc294e73071d1992</p>
     </article>
   </div>
   <p class="fine">Verify your download with <code>shasum -a 256 file.iso</code>. Not tested on real hardware, so do not install it on a computer you care about, and back up first. Older ZoltOS and ZengOS previews are in the <a href="download.html">archive</a>.</p>
@@ -140,9 +140,9 @@
     <div>
       <h3>Done</h3>
       <ul>
-        <li>ISOs built in GitHub Actions for both editions.</li>
+        <li>ISOs for both editions built in GitHub Actions. Both boot into the installer in QEMU.</li>
         <li>ZengOS Mini booted in QEMU, installed to an encrypted virtual disk, rebooted, and reached the Zolt desktop with ZengAV installed.</li>
-        <li>The installer interface, in Qt Quick, and the install backend with its tests.</li>
+        <li>The installer, clicked through in the booted ISO, and its backend with tests.</li>
         <li>A ZengOS package repository for updates and add-ons.</li>
       </ul>
     </div>
@@ -150,7 +150,7 @@
       <h3>Not yet</h3>
       <ul>
         <li>Nothing has been tested on real hardware.</li>
-        <li>The installer's screens have not been clicked through inside a booted ISO. The backend was run directly.</li>
+        <li>A full install of the larger ZengOS edition has not been run. Mini has.</li>
         <li>ZengSuite is not packaged yet, so the installer shows it as coming soon.</li>
         <li>No Secure Boot, dual boot or manual partitioning.</li>
       </ul>
