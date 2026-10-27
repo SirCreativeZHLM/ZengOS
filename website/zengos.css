@@ -183,7 +183,8 @@ main > .statement { max-width: none; padding-left: 0; padding-right: 0; }
 .dl p { color: var(--dim); max-width: 28em; }
 .dl .dl-meta { color: var(--ink); font-weight: 700; }
 .dl .dl-status { color: var(--ink); }
-.dl .btn { margin-top: 10px; }
+.dl .dl-status { margin-bottom: 14px; }
+.dl .btn { margin-top: auto; }
 .dl .sum { font-size: .85rem; word-break: break-all; }
 .dl .sum a { color: var(--ink); font-weight: 700; }
 .download .fine { margin-top: 32px; }
