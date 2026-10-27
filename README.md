@@ -15,17 +15,19 @@ Website: <https://zengbot.com/os>
 
 ## Status
 
-Early. Be clear-eyed about what exists:
+Early preview. What has been verified, and what has not:
 
 | Part | State |
 | --- | --- |
-| Installer UI (`installer/`, Qt Quick) | Built and run on macOS in demo mode. |
-| Install backend (`installer/backend/`) | Unit-tested in dry-run mode only. It has never written to a real disk. |
-| Zolt shell (`shell/`) | Written. Never run on a real labwc session. |
-| Packages and ISO build (`packages/`, `iso/`) | Written. No image has been built or booted yet. |
+| ISOs (`iso/`) | Built for both editions by GitHub Actions in an Arch container. |
+| Live boot | ZengOS Mini boots under UEFI in QEMU straight into the installer. |
+| Installer UI + backend | Clicked through in the booted Mini ISO, which installed to an encrypted virtual disk. |
+| Installed system | Rebooted from that disk: unlock prompt, login, Zolt desktop (bar, clock, dock), ZengAV 0.2.1 installed. |
+| ZengOS (Normal) ISO | Built and checksummed. Not yet booted. |
+| ZengSuite add-on | Not packaged yet; the installer shows it as coming soon. |
 | Real hardware | Untested. |
 
-Do not install this on a computer you care about until a release says it has been validated.
+All boot tests ran in QEMU on emulated x86_64. Do not install on a computer you care about.
 
 ## Layout
 
