@@ -175,3 +175,17 @@ main > .statement { max-width: none; padding-left: 0; padding-right: 0; }
 @media (max-width: 860px) {
   .hero-shot img, .shots img { aspect-ratio: 1 / 1; object-fit: cover; object-position: 50% 45%; }
 }
+
+/* Download */
+.dl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 48px; }
+.dl { padding: clamp(28px, 4vw, 56px); border-radius: 28px; display: flex; flex-direction: column; gap: 14px; align-items: flex-start; }
+.dl h3 { font-size: clamp(2.2rem, 5vw, 4rem); }
+.dl p { color: var(--dim); max-width: 28em; }
+.dl .dl-meta { color: var(--ink); font-weight: 700; }
+.dl .dl-status { color: var(--ink); }
+.dl .btn { margin-top: 10px; }
+.dl .sum { font-size: .85rem; word-break: break-all; }
+.dl .sum a { color: var(--ink); font-weight: 700; }
+.download .fine { margin-top: 32px; }
+.download .fine a, .download .fine code { color: var(--ink); }
+@media (max-width: 860px) { .dl-grid { grid-template-columns: 1fr; } }

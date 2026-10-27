@@ -57,6 +57,8 @@ Window {
         })
     }
 
+    onPageChanged: if (page === 3) fullName.forceFocus()
+
     Component.onCompleted: {
         page = startPage
         if (startPage === 2) { /* disks render from backend */ }
@@ -209,8 +211,8 @@ Window {
         index: 3
         heading: "Who are you?"
         sub: "This creates your account on the new system."
-        Field { id: fullName; width: parent.width; label: "Full name" }
-        Field { id: pass; width: parent.width; label: "Password"; password: true }
+        Field { id: fullName; width: parent.width; label: "Full name"; onAccepted: pass.forceFocus() }
+        Field { id: pass; width: parent.width; label: "Password"; password: true; onAccepted: pass2.forceFocus() }
         Field {
             id: pass2
             width: parent.width

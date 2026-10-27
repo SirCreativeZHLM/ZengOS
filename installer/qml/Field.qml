@@ -36,6 +36,12 @@ Item {
         Behavior on y { NumberAnimation { duration: 160; easing.type: Easing.OutCubic } }
         Behavior on font.pixelSize { NumberAnimation { duration: 160 } }
     }
+    // The whole field is the click target, not just the line of text.
+    MouseArea {
+        anchors.fill: parent
+        cursorShape: Qt.IBeamCursor
+        onPressed: input.forceActiveFocus()
+    }
     TextInput {
         id: input
         anchors.left: parent.left

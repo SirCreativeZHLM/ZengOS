@@ -15,6 +15,7 @@
 <header class="top">
   <a class="word" href="./">ZengOS</a>
   <nav aria-label="Main">
+    <a href="#download">Download</a>
     <a href="#editions">Editions</a>
     <a href="#zolt">Desktop</a>
     <a href="#installer">Installer</a>
@@ -30,7 +31,7 @@
     <h1>Screw Windows.</h1>
     <p class="lead">ZengOS is an operating system built on Arch Linux. A new desktop, an installer you will actually enjoy, and nothing you did not ask for.</p>
     <div class="actions">
-      <a class="btn" href="#build">Build it today</a>
+      <a class="btn" href="#download">Download ZengOS</a>
       <a class="btn btn-quiet" href="#status">Where it stands</a>
     </div>
   </div>
@@ -41,6 +42,30 @@
 
 <section class="statement">
   <p class="big">Zero bloat is a rule, not a slogan. If it is not on the list, it is not on your disk.</p>
+</section>
+
+<section id="download" class="download">
+  <h2>Download ZengOS.</h2>
+  <p class="lead">Early preview ISOs, built by GitHub Actions from the open source repository. Write one to a USB stick, boot it, and the installer opens. Try it in a virtual machine first.</p>
+  <div class="dl-grid">
+    <article class="dl ed-normal">
+      <h3>ZengOS</h3>
+      <p class="dl-meta">@NORMAL_SIZE@ &middot; x86_64 &middot; UEFI</p>
+      <p>The desktop, a terminal, files, Firefox, and image and video viewers.</p>
+      <p class="dl-status">Built and checksummed. Not yet booted.</p>
+      <a class="btn" href="@NORMAL_URL@">Download ISO</a>
+      <p class="sum"><a href="@NORMAL_SUM_URL@">SHA-256</a> @NORMAL_SUM@</p>
+    </article>
+    <article class="dl ed-mini">
+      <h3>ZengOS Mini</h3>
+      <p class="dl-meta">@MINI_SIZE@ &middot; x86_64 &middot; UEFI</p>
+      <p>The desktop and a terminal. Nothing else.</p>
+      <p class="dl-status">Booted and installed to an encrypted virtual disk in QEMU. The installed system reached the Zolt desktop.</p>
+      <a class="btn" href="@MINI_URL@">Download ISO</a>
+      <p class="sum"><a href="@MINI_SUM_URL@">SHA-256</a> @MINI_SUM@</p>
+    </article>
+  </div>
+  <p class="fine">Verify your download with <code>shasum -a 256 file.iso</code>. Not tested on real hardware, so do not install it on a computer you care about, and back up first. Older ZoltOS and ZengOS previews are in the <a href="download.html">archive</a>.</p>
 </section>
 
 <section id="editions" class="editions">
@@ -63,7 +88,7 @@
       <button type="button" class="chip" data-addon="zengav" aria-pressed="false">+ ZengAV</button>
       <button type="button" class="chip" data-addon="zengsuite" aria-pressed="false">+ ZengSuite</button>
     </div>
-    <p class="picker-count" aria-live="polite"><span data-count>0</span> packages you chose, plus the Linux kernel and firmware.</p>
+    <p class="picker-count" aria-live="polite"><span data-count>0</span> packages you chose. Their dependencies come with them: a measured ZengOS Mini install with ZengAV has 378 packages in total.</p>
     <ul class="packages" data-packages></ul>
   </div>
 </section>
@@ -115,19 +140,19 @@
     <div>
       <h3>Done</h3>
       <ul>
-        <li>The installer interface, written in Qt Quick and running.</li>
-        <li>The install backend: partitioning, encryption, bootloader. It refuses unsafe input, and its tests pass in dry-run mode.</li>
-        <li>The Zolt shell: bar, dock and launcher.</li>
-        <li>Package definitions and the ISO build, run by GitHub Actions in an Arch container.</li>
+        <li>ISOs built in GitHub Actions for both editions.</li>
+        <li>ZengOS Mini booted in QEMU, installed to an encrypted virtual disk, rebooted, and reached the Zolt desktop with ZengAV installed.</li>
+        <li>The installer interface, in Qt Quick, and the install backend with its tests.</li>
+        <li>A ZengOS package repository for updates and add-ons.</li>
       </ul>
     </div>
     <div>
       <h3>Not yet</h3>
       <ul>
-        <li>No ISO has been published. None has been booted, so none is called ready.</li>
-        <li>The installer has not written to a real disk.</li>
-        <li>The Zolt shell has not run on a real labwc session.</li>
         <li>Nothing has been tested on real hardware.</li>
+        <li>The installer's screens have not been clicked through inside a booted ISO. The backend was run directly.</li>
+        <li>ZengSuite is not packaged yet, so the installer shows it as coming soon.</li>
+        <li>No Secure Boot, dual boot or manual partitioning.</li>
       </ul>
     </div>
   </div>

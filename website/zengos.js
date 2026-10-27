@@ -79,7 +79,7 @@ if (dock) {
 }
 
 // Reveal sections as they scroll in.
-const targets = document.querySelectorAll('main > section:not(.hero) h2, .lead, .edition, .picker, .zolt-copy p, .dock-demo, .shots figure, .addon-grid article, .status-grid > div, .build pre, .statement .big');
+const targets = document.querySelectorAll('main > section:not(.hero) h2, .lead, .edition, .picker, .zolt-copy p, .dock-demo, .shots figure, .addon-grid article, .dl, .status-grid > div, .build pre, .statement .big');
 if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
   const io = new IntersectionObserver((entries) => {
     for (const en of entries) if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); }
